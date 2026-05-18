@@ -47,6 +47,9 @@ class Settings:
     dingtalk_secret: str | None
     database_path: Path
     novels_path: Path
+    http_timeout_seconds: int
+    http_retry_count: int
+    http_retry_backoff_seconds: float
     interval_seconds: int
     notify_on_first_seen: bool
     log_level: int
@@ -121,6 +124,11 @@ def load_settings() -> Settings:
         dingtalk_secret=os.getenv("NOVEL_REMINDER_DINGTALK_SECRET") or None,
         database_path=database_path,
         novels_path=novels_path,
+        http_timeout_seconds=_read_int("NOVEL_REMINDER_HTTP_TIMEOUT_SECONDS", 20),
+        http_retry_count=_read_int("NOVEL_REMINDER_HTTP_RETRY_COUNT", 3),
+        http_retry_backoff_seconds=float(
+            os.getenv("NOVEL_REMINDER_HTTP_RETRY_BACKOFF_SECONDS", "1.5")
+        ),
         interval_seconds=_read_int("NOVEL_REMINDER_INTERVAL_SECONDS", 300),
         notify_on_first_seen=_read_bool(
             "NOVEL_REMINDER_NOTIFY_ON_FIRST_SEEN", False

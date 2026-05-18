@@ -19,7 +19,11 @@ class NovelReminderService:
         self.settings = settings
         self.novels = load_novels_config(settings.novels_path)
         self.novels_by_id = {novel.novel_id: novel for novel in self.novels}
-        self.http_client = HttpClient()
+        self.http_client = HttpClient(
+            timeout=settings.http_timeout_seconds,
+            retry_count=settings.http_retry_count,
+            retry_backoff_seconds=settings.http_retry_backoff_seconds,
+        )
         self.store = StateStore(settings.database_path)
         self.notifier = DingTalkNotifier(
             self.http_client,

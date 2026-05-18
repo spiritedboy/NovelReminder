@@ -34,6 +34,9 @@ cp .env.example .env
 - `NOVEL_REMINDER_DINGTALK_SECRET`：可选，若机器人启用加签则填写
 - `NOVEL_REMINDER_DATABASE_PATH`：SQLite 状态库路径
 - `NOVEL_REMINDER_NOVELS_PATH`：小说配置文件路径，默认 `config/novels.json`
+- `NOVEL_REMINDER_HTTP_TIMEOUT_SECONDS`：单次 HTTP 请求超时秒数，默认 `20`
+- `NOVEL_REMINDER_HTTP_RETRY_COUNT`：HTTP 请求失败后的重试次数，默认 `3`
+- `NOVEL_REMINDER_HTTP_RETRY_BACKOFF_SECONDS`：每次重试前的退避秒数，默认 `1.5`
 - `NOVEL_REMINDER_INTERVAL_SECONDS`：轮询间隔，默认 `300`
 - `NOVEL_REMINDER_NOTIFY_ON_FIRST_SEEN`：首次发现最新章节时是否立即通知，默认 `false`
 - `NOVEL_REMINDER_LOG_LEVEL`：日志级别，默认 `INFO`
@@ -133,6 +136,7 @@ crontab -e
 - `run-once` 更适合 cron；`run-loop` 适合 `systemd` 这类常驻进程托管。
 - 如果你还没有日志目录，先执行 `mkdir -p /path/to/NovelReminder/logs`。
 - 如果你使用的是其他 Python 路径，请把 `/usr/bin/python3` 换成实际路径，可通过 `which python3` 查看。
+- 如果目标站点偶发超时，可以在 `.env` 里适当调大 `NOVEL_REMINDER_HTTP_TIMEOUT_SECONDS`，例如设成 `30`，同时保留默认重试配置。
 
 也可以直接使用仓库里的 [deploy/systemd/novel-reminder.service](deploy/systemd/novel-reminder.service) 作为模板。
 
