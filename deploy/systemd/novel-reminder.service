@@ -1,0 +1,14 @@
+[Unit]
+Description=Novel Reminder
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/NovelReminder
+EnvironmentFile=/opt/NovelReminder/.env
+ExecStart=/usr/bin/python3 -m src.main run-loop
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
