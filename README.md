@@ -105,6 +105,35 @@ python3 -m src.main run-loop
 
 前期可直接使用 `systemd` 托管 `python3 -m src.main run-loop`。
 
+如果你更习惯 `crontab`，推荐不要使用 `run-loop`，而是让 cron 每 5 分钟触发一次 `run-once`。
+
+### crontab 示例
+
+编辑定时任务：
+
+```bash
+crontab -e
+```
+
+最简版本，每 5 分钟检查一次：
+
+```cron
+*/5 * * * * cd /path/to/NovelReminder && /usr/bin/python3 -m src.main run-once >> /path/to/NovelReminder/logs/cron.log 2>&1
+```
+
+更稳一点的版本，使用 `flock` 避免上一次任务还没跑完时重复触发：
+
+```cron
+*/5 * * * * cd /path/to/NovelReminder && /usr/bin/flock -n /tmp/novel-reminder.lock /usr/bin/python3 -m src.main run-once >> /path/to/NovelReminder/logs/cron.log 2>&1
+```
+
+说明：
+
+- `cd /path/to/NovelReminder` 不能省略，因为程序会从当前目录加载 `.env` 和相对路径配置。
+- `run-once` 更适合 cron；`run-loop` 适合 `systemd` 这类常驻进程托管。
+- 如果你还没有日志目录，先执行 `mkdir -p /path/to/NovelReminder/logs`。
+- 如果你使用的是其他 Python 路径，请把 `/usr/bin/python3` 换成实际路径，可通过 `which python3` 查看。
+
 也可以直接使用仓库里的 [deploy/systemd/novel-reminder.service](deploy/systemd/novel-reminder.service) 作为模板。
 
 如果更倾向容器运行，可使用：
